@@ -78,7 +78,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#E0F2F1] font-sans text-[#2C2A26] selection:bg-[#B2DFDB] selection:text-[#2C2A26]">
+    <div className="min-h-screen bg-[#FFF1F2] font-sans text-[#4C0519] selection:bg-rose-200 selection:text-[#4C0519]">
       {view.type !== 'checkout' && (
         <Navbar 
             onNavClick={handleNavClick} 

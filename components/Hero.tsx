@@ -31,7 +31,7 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full h-screen min-h-[800px] overflow-hidden bg-[#D6D1C7]">
+    <section className="relative w-full h-screen min-h-[800px] overflow-hidden bg-[#FECDD3]">
       
       {/* Background Image - Serene Nature */}
       <div className="absolute inset-0 w-full h-full">
@@ -41,9 +41,9 @@ const Hero: React.FC = () => {
             className="w-full h-full object-cover grayscale contrast-[0.7] brightness-[0.95] animate-[pulse_15s_ease-in-out_infinite_alternate]"
         />
         {/* Warmer Brown Overlay for Richness */}
-        <div className="absolute inset-0 bg-[#433E38]/40 mix-blend-multiply"></div>
+        <div className="absolute inset-0 bg-[#4C0519]/40 mix-blend-multiply"></div>
         {/* Deep Sepia Tone for Shadow Depth */}
-        <div className="absolute inset-0 bg-[#313030]/20"></div>
+        <div className="absolute inset-0 bg-[#4C0519]/20"></div>
       </div>
 
       {/* Content */}
@@ -53,7 +53,7 @@ const Hero: React.FC = () => {
             Coleção Maternidade 2026
           </span>
           <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif font-normal text-white tracking-tight mb-8 drop-shadow-sm">
-            Acolhendo a <span className="italic text-[#F5F2EB]">vida.</span>
+            Acolhendo a <span className="italic text-[#FFF1F2]">vida.</span>
           </h1>
           <p className="max-w-lg mx-0 md:mx-auto text-lg md:text-xl text-white/90 font-light leading-relaxed mb-12 text-shadow-sm">
             Produtos selecionados com carinho para a jornada mais importante da sua vida. <br/>
@@ -63,9 +63,9 @@ const Hero: React.FC = () => {
           <a 
             href="#products" 
             onClick={(e) => handleNavClick(e, 'products')}
-            className="group relative px-10 py-4 bg-[#F5F2EB] text-[#2C2A26] rounded-full text-sm font-semibold uppercase tracking-widest hover:bg-white transition-all duration-500 overflow-hidden shadow-lg hover:shadow-xl inline-block"
+            className="group relative px-10 py-4 bg-[#FFF1F2] text-[#4C0519] rounded-full text-sm font-semibold uppercase tracking-widest hover:bg-white transition-all duration-500 overflow-hidden shadow-lg hover:shadow-xl inline-block"
           >
-            <span className="relative z-10 group-hover:text-[#2C2A26]">Ver Coleção</span>
+            <span className="relative z-10 group-hover:text-[#4C0519]">Ver Coleção</span>
           </a>
         </div>
       </div>

@@ -107,16 +107,16 @@ export const JOURNAL_ARTICLES: JournalArticle[] = [
         excerpt: "Por que nossas pontas dos dedos anseiam por superfícies naturais em um mundo de vidro e plástico.",
         image: "https://images.unsplash.com/photo-1617791160505-6f00504e3519?auto=format&fit=crop&q=80&w=1000",
         content: React.createElement(React.Fragment, null,
-            React.createElement("p", { className: "mb-6 first-letter:text-5xl first-letter:font-serif first-letter:mr-3 first-letter:float-left text-[#5D5A53]" },
+            React.createElement("p", { className: "mb-6 first-letter:text-5xl first-letter:font-serif first-letter:mr-3 first-letter:float-left text-[#881337]" },
                 "Vivemos em um mundo sem atrito. Nossos telefones são de vidro liso, nossos laptops de alumínio polido, nossas bancadas de quartzo projetado. Não há resistência, não há granulação, não há textura. E, no entanto, nossa biologia anseia por isso."
             ),
-            React.createElement("p", { className: "mb-8 text-[#5D5A53]" },
+            React.createElement("p", { className: "mb-8 text-[#881337]" },
                 "As pontas dos dedos estão entre as partes mais densamente inervadas do corpo humano. Elas foram projetadas para ler a história de um objeto — sua idade, sua origem, sua temperatura. Quando negamos a elas essa entrada, experimentamos uma forma sutil de privação sensorial."
             ),
-            React.createElement("blockquote", { className: "border-l-2 border-[#2C2A26] pl-6 italic text-xl text-[#2C2A26] my-10 font-serif" },
+            React.createElement("blockquote", { className: "border-l-2 border-[#4C0519] pl-6 italic text-xl text-[#4C0519] my-10 font-serif" },
                 "\"Tocar é conhecer. Sentir é estar aterrado.\""
             ),
-            React.createElement("p", { className: "mb-6 text-[#5D5A53]" },
+            React.createElement("p", { className: "mb-6 text-[#881337]" },
                 "Na Achadinhos Maternidade, projetamos tanto para a mão quanto para o olho. Escolhemos materiais que têm voz. Arenito que aquece sob a palma da mão. Tecido que tem uma trama que você pode rastrear. Madeira que lembra a floresta."
             )
         )
@@ -128,15 +128,15 @@ export const JOURNAL_ARTICLES: JournalArticle[] = [
         excerpt: "Uma conversa com o arquiteto Hiroshi Nakamura sobre a arte do espaço vazio.",
         image: "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&q=80&w=1000",
         content: React.createElement(React.Fragment, null,
-            React.createElement("p", { className: "mb-6 text-[#5D5A53]" },
+            React.createElement("p", { className: "mb-6 text-[#881337]" },
                 "O vazio não é nada. Na arquitetura japonesa, o conceito de ",
                 React.createElement("em", null, "Ma"),
                 " refere-se ao espaço entre as coisas — a pausa que dá forma ao todo."
             ),
-            React.createElement("p", { className: "mb-8 text-[#5D5A53]" },
+            React.createElement("p", { className: "mb-8 text-[#881337]" },
                 "\"Tendemos a encher nossas vidas com ruído\", diz Nakamura, tomando chá em seu estúdio com vista para as ruas chuvosas de Quioto. \"Compramos mais dispositivos para economizar tempo, mas acabamos com menos tempo do que nunca. O verdadeiro luxo é a ausência de intrusão.\""
             ),
-            React.createElement("div", { className: "my-12 p-8 bg-[#EBE7DE] font-serif text-[#2C2A26] italic text-center" },
+            React.createElement("div", { className: "my-12 p-8 bg-[#FFE4E6] font-serif text-[#4C0519] italic text-center" },
                 React.createElement("p", null, "O quarto está vazio"),
                 React.createElement("p", null, "Mas cheio de luz."),
                 React.createElement("p", null, "A mente está quieta"),
@@ -144,7 +144,7 @@ export const JOURNAL_ARTICLES: JournalArticle[] = [
                 React.createElement("p", null, "Este é o peso"),
                 React.createElement("p", null, "De viver com menos.")
             ),
-            React.createElement("p", { className: "mb-6 text-[#5D5A53]" },
+            React.createElement("p", { className: "mb-6 text-[#881337]" },
                 "Esta filosofia impulsiona cada curva da nossa nova coleção. Perguntamos a nós mesmos: o que podemos remover? Quanto podemos tirar até que apenas o essencial permaneça?"
             )
         )
@@ -156,13 +156,13 @@ export const JOURNAL_ARTICLES: JournalArticle[] = [
         excerpt: "Notas do estúdio de design: névoa matinal, pedra úmida e linho pálido.",
         image: "https://images.unsplash.com/photo-1516834474-48c0abc2a902?auto=format&fit=crop&q=80&w=1000",
         content: React.createElement(React.Fragment, null,
-            React.createElement("p", { className: "mb-6 text-[#5D5A53]" },
+            React.createElement("p", { className: "mb-6 text-[#881337]" },
                 "A primavera no estúdio é um momento de despertar. A luz muda dos ângulos baixos e severos do inverno para um brilho mais suave e difuso. Sentimo-nos atraídos por tons mais pálidos — o cinza do pavimento úmido, o creme do linho não branqueado, o verde empoeirado da sálvia."
             ),
-            React.createElement("p", { className: "mb-8 text-[#5D5A53]" },
+            React.createElement("p", { className: "mb-8 text-[#881337]" },
                 "Nosso moodboard deste mês é um estudo sobre suavidade. Trata-se do estado de transição — nem frio nem quente, nem escuro nem brilhante. É o amanhecer do ano."
             ),
-             React.createElement("div", { className: "my-12 p-8 bg-[#2C2A26] text-[#F5F2EB] font-serif italic text-center" },
+             React.createElement("div", { className: "my-12 p-8 bg-[#4C0519] text-[#FFF1F2] font-serif italic text-center" },
                 React.createElement("p", null, "Brotos verdes surgindo"),
                 React.createElement("p", null, "Pedra cinza fria contra a pele"),
                 React.createElement("p", null, "O sol aquece o ar.")
@@ -172,5 +172,5 @@ export const JOURNAL_ARTICLES: JournalArticle[] = [
 ];
 
 export const BRAND_NAME = 'Achadinhos Maternidade';
-export const PRIMARY_COLOR = 'stone-900'; 
-export const ACCENT_COLOR = 'stone-500';
+export const PRIMARY_COLOR = 'rose-950'; 
+export const ACCENT_COLOR = 'rose-400';

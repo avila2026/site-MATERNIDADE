@@ -37,13 +37,13 @@ const Navbar: React.FC<NavbarProps> = ({ onNavClick, cartCount, onOpenCart }) =>
   }
 
   // Determine text color based on state
-  const textColorClass = (scrolled || mobileMenuOpen) ? 'text-[#2C2A26]' : 'text-[#F5F2EB]';
+  const textColorClass = (scrolled || mobileMenuOpen) ? 'text-[#4C0519]' : 'text-[#FFF1F2]';
 
   return (
     <>
       <nav 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-in-out ${
-          scrolled || mobileMenuOpen ? 'bg-[#F5F2EB]/90 backdrop-blur-md py-4 shadow-sm' : 'bg-transparent py-8'
+          scrolled || mobileMenuOpen ? 'bg-[#FFF1F2]/90 backdrop-blur-md py-4 shadow-sm' : 'bg-transparent py-8'
         }`}
       >
         <div className="max-w-[1800px] mx-auto px-8 flex items-center justify-between">
@@ -96,10 +96,10 @@ const Navbar: React.FC<NavbarProps> = ({ onNavClick, cartCount, onOpenCart }) =>
       </nav>
 
       {/* Mobile Menu Overlay */}
-      <div className={`fixed inset-0 bg-[#F5F2EB] z-40 flex flex-col justify-center items-center transition-all duration-500 ease-in-out ${
+      <div className={`fixed inset-0 bg-[#FFF1F2] z-40 flex flex-col justify-center items-center transition-all duration-500 ease-in-out ${
           mobileMenuOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-10 pointer-events-none'
       }`}>
-          <div className="flex flex-col items-center space-y-8 text-xl font-serif font-medium text-[#2C2A26]">
+          <div className="flex flex-col items-center space-y-8 text-xl font-serif font-medium text-[#4C0519]">
             <a href="#products" onClick={(e) => handleLinkClick(e, 'products')} className="hover:opacity-60 transition-opacity">Loja</a>
             <a href="#about" onClick={(e) => handleLinkClick(e, 'about')} className="hover:opacity-60 transition-opacity">Sobre</a>
             <a href="#journal" onClick={(e) => handleLinkClick(e, 'journal')} className="hover:opacity-60 transition-opacity">Diário</a>
