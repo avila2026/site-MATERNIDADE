@@ -136,6 +136,7 @@ function App() {
             onBack={() => setView({ type: 'home' })}
             onProductClick={(p) => setView({ type: 'product', product: p })}
             onAddProduct={(newProduct) => setProducts([...products, newProduct])}
+            onUpdateProduct={(updatedProduct) => setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p))}
           />
         )}
       </main>

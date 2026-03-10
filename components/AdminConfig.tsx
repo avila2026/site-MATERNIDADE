@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LayoutGrid, List } from 'lucide-react';
 import ProductCard from './ProductCard';
+import ImageGenerator from './ImageGenerator';
 import { Product } from '../types';
 
 interface AdminConfigProps {
@@ -8,6 +9,7 @@ interface AdminConfigProps {
   onBack: () => void;
   onProductClick: (product: Product) => void;
   onAddProduct: (product: Product) => void;
+  onUpdateProduct: (product: Product) => void;
 }
 
 const ProductListItem: React.FC<{ product: Product; onClick: (p: Product) => void }> = ({ product, onClick }) => (
@@ -36,7 +38,8 @@ const ProductListItem: React.FC<{ product: Product; onClick: (p: Product) => voi
   </div>
 );
 
-const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductClick, onAddProduct }) => {
+const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductClick, onAddProduct, onUpdateProduct }) => {
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -44,23 +47,43 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
   const [category, setCategory] = useState<Product['category']>('Quarto');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
+  const startEdit = (product: Product) => {
+    setEditingProduct(product);
+    setName(product.name);
+    setDescription(product.description);
+    setPrice(product.price.toString());
+    setImageUrl(product.imageUrl);
+    setCategory(product.category);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !description || !price || !imageUrl) return;
 
-    const newProduct: Product = {
-      id: `p${Date.now()}`,
-      name,
-      tagline: 'Novidade',
-      description,
-      longDescription: description,
-      price: parseFloat(price),
-      category,
-      imageUrl,
-      features: ['Novo Produto']
-    };
-
-    onAddProduct(newProduct);
+    if (editingProduct) {
+      onUpdateProduct({
+        ...editingProduct,
+        name,
+        description,
+        price: parseFloat(price),
+        category,
+        imageUrl,
+      });
+      setEditingProduct(null);
+    } else {
+      const newProduct: Product = {
+        id: `p${Date.now()}`,
+        name,
+        tagline: 'Novidade',
+        description,
+        longDescription: description,
+        price: parseFloat(price),
+        category,
+        imageUrl,
+        features: ['Novo Produto']
+      };
+      onAddProduct(newProduct);
+    }
     setName('');
     setDescription('');
     setPrice('');
@@ -77,7 +100,7 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
         <div className="flex flex-col lg:flex-row gap-16">
           {/* Form Section */}
           <div className="lg:w-1/3">
-            <h2 className="text-3xl font-serif text-[#4C0519] mb-8">Adicionar Novo Produto</h2>
+            <h2 className="text-3xl font-serif text-[#4C0519] mb-8">{editingProduct ? 'Editar Produto' : 'Adicionar Novo Produto'}</h2>
             <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-2xl shadow-sm border border-[#FECDD3]/30">
               <div>
                 <label className="block text-xs uppercase tracking-widest text-[#881337] mb-2">Nome</label>
@@ -134,13 +157,32 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
                   className="w-full bg-[#FFF1F2] border-none rounded-lg p-3 outline-none focus:ring-1 focus:ring-[#4C0519] transition-all"
                   placeholder="https://images.unsplash.com/..."
                 />
+                <div className="mt-4">
+                  <p className="text-xs uppercase tracking-widest text-[#881337] mb-2">Ou gere uma imagem:</p>
+                  <ImageGenerator onImageGenerated={setImageUrl} />
+                </div>
               </div>
               <button 
                 type="submit"
                 className="w-full bg-[#4C0519] text-white py-4 rounded-full text-sm uppercase tracking-widest font-medium hover:bg-[#881337] transition-colors mt-4"
               >
-                Adicionar Produto
+                {editingProduct ? 'Atualizar Produto' : 'Adicionar Produto'}
               </button>
+              {editingProduct && (
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setEditingProduct(null);
+                    setName('');
+                    setDescription('');
+                    setPrice('');
+                    setImageUrl('');
+                  }}
+                  className="w-full bg-[#FDA4AF] text-white py-4 rounded-full text-sm uppercase tracking-widest font-medium hover:bg-[#F4C2C2] transition-colors mt-2"
+                >
+                  Cancelar
+                </button>
+              )}
             </form>
           </div>
 
@@ -171,7 +213,18 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
             {viewMode === 'grid' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-20">
                 {products.map(product => (
-                  <ProductCard key={product.id} product={product} onClick={onProductClick} />
+                  <div key={product.id} className="relative group">
+                    <ProductCard product={product} onClick={onProductClick} />
+                    <button 
+                      onClick={() => startEdit(product)}
+                      className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Editar"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#4C0519]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                  </div>
                 ))}
               </div>
             ) : (

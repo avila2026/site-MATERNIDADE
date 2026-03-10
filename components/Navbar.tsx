@@ -65,6 +65,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavClick, cartCount, onOpenCart }) =>
             <a href="#products" onClick={(e) => handleLinkClick(e, 'products')} className="hover:opacity-60 transition-opacity">Loja</a>
             <a href="#about" onClick={(e) => handleLinkClick(e, 'about')} className="hover:opacity-60 transition-opacity">Sobre</a>
             <a href="#journal" onClick={(e) => handleLinkClick(e, 'journal')} className="hover:opacity-60 transition-opacity">Diário</a>
+            <a href="#admin" onClick={(e) => handleLinkClick(e, 'admin')} className="hover:opacity-60 transition-opacity">Admin</a>
           </div>
 
           {/* Right Actions */}
@@ -103,6 +104,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavClick, cartCount, onOpenCart }) =>
             <a href="#products" onClick={(e) => handleLinkClick(e, 'products')} className="hover:opacity-60 transition-opacity">Loja</a>
             <a href="#about" onClick={(e) => handleLinkClick(e, 'about')} className="hover:opacity-60 transition-opacity">Sobre</a>
             <a href="#journal" onClick={(e) => handleLinkClick(e, 'journal')} className="hover:opacity-60 transition-opacity">Diário</a>
+            <a href="#admin" onClick={(e) => handleLinkClick(e, 'admin')} className="hover:opacity-60 transition-opacity">Admin</a>
             <button 
                 onClick={handleCartClick} 
                 className="hover:opacity-60 transition-opacity text-base uppercase tracking-widest font-sans mt-8"
