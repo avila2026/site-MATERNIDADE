@@ -5,23 +5,23 @@
 
 
 import React, { useState, useMemo } from 'react';
-import { PRODUCTS } from '../constants';
 import { Product } from '../types';
 import ProductCard from './ProductCard';
 
 const categories = ['Todos', 'Quarto', 'Vestuário', 'Passeio', 'Higiene', 'Acessórios', 'Brinquedos'];
 
 interface ProductGridProps {
+  products: Product[];
   onProductClick: (product: Product) => void;
 }
 
-const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick }) => {
+const ProductGrid: React.FC<ProductGridProps> = ({ products, onProductClick }) => {
   const [activeCategory, setActiveCategory] = useState('Todos');
 
   const filteredProducts = useMemo(() => {
-    if (activeCategory === 'Todos') return PRODUCTS;
-    return PRODUCTS.filter(p => p.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === 'Todos') return products;
+    return products.filter(p => p.category === activeCategory);
+  }, [activeCategory, products]);
 
   return (
     <section id="products" className="py-32 px-6 md:px-12 bg-[#F5F2EB]">

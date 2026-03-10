@@ -17,9 +17,11 @@ import ProductDetail from './components/ProductDetail';
 import JournalDetail from './components/JournalDetail';
 import CartDrawer from './components/CartDrawer';
 import Checkout from './components/Checkout';
+import { PRODUCTS, JOURNAL_ARTICLES } from './constants';
 import { Product, JournalArticle, ViewState } from './types';
 
 function App() {
+  const [products, setProducts] = useState<Product[]>(PRODUCTS);
   const [view, setView] = useState<ViewState>({ type: 'home' });
   const [cartItems, setCartItems] = useState<Product[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -89,7 +91,9 @@ function App() {
         {view.type === 'home' && (
           <>
             <Hero />
-            <ProductGrid onProductClick={(p) => {
+            <ProductGrid 
+              products={products}
+              onProductClick={(p) => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 setView({ type: 'product', product: p });
             }} />
@@ -128,8 +132,10 @@ function App() {
 
         {view.type === 'admin' && (
           <AdminConfig 
+            products={products}
             onBack={() => setView({ type: 'home' })}
             onProductClick={(p) => setView({ type: 'product', product: p })}
+            onAddProduct={(newProduct) => setProducts([...products, newProduct])}
           />
         )}
       </main>
