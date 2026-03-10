@@ -1,0 +1,70 @@
+import React, { useState } from 'react';
+import { GoogleGenAI } from "@google/genai";
+
+interface ImageGeneratorProps {
+  onImageGenerated: (imageUrl: string) => void;
+}
+
+const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => {
+  const [prompt, setPrompt] = useState('');
+  const [aspectRatio, setAspectRatio] = useState('1:1');
+  const [loading, setLoading] = useState(false);
+
+  const generateImage = async () => {
+    setLoading(true);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.1-flash-image-preview',
+        contents: {
+          parts: [{ text: prompt }],
+        },
+        config: {
+          imageConfig: {
+            aspectRatio: aspectRatio,
+            imageSize: "1K"
+          },
+        },
+      });
+
+      for (const part of response.candidates[0].content.parts) {
+        if (part.inlineData) {
+          const base64EncodeString = part.inlineData.data;
+          const imageUrl = `data:image/png;base64,${base64EncodeString}`;
+          onImageGenerated(imageUrl);
+          break;
+        }
+      }
+    } catch (error) {
+      console.error('Error generating image:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="p-4 bg-white rounded-xl shadow-md space-y-4">
+      <input
+        type="text"
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        placeholder="Descreva a imagem..."
+        className="w-full p-2 border rounded"
+      />
+      <select value={aspectRatio} onChange={(e) => setAspectRatio(e.target.value)} className="w-full p-2 border rounded">
+        {['1:1', '2:3', '3:2', '3:4', '4:3', '9:16', '16:9', '21:9'].map(ratio => (
+          <option key={ratio} value={ratio}>{ratio}</option>
+        ))}
+      </select>
+      <button
+        onClick={generateImage}
+        disabled={loading}
+        className="w-full bg-[#2C2A26] text-white p-2 rounded"
+      >
+        {loading ? 'Gerando...' : 'Gerar Imagem'}
+      </button>
+    </div>
+  );
+};
+
+export default ImageGenerator;
