@@ -1,13 +1,6 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
-*/
-
-
-import React, { useState } from 'react';
+import React from 'react';
 import { Settings } from 'lucide-react';
 import { Product } from '../types';
-import ImageGenerator from './ImageGenerator';
 
 interface ProductCardProps {
   product: Product;
@@ -15,14 +8,11 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
-  const [imageUrl, setImageUrl] = useState(product.imageUrl);
-  const [showConfig, setShowConfig] = useState(false);
-
   return (
     <div className="group flex flex-col gap-6 cursor-pointer" onClick={() => onClick(product)}>
       <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#FFE4E6]">
         <img 
-          src={imageUrl} 
+          src={product.imageUrl} 
           alt={product.name} 
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 sepia-[0.1]"
@@ -38,7 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
         </div>
 
         <button
-          onClick={(e) => { e.stopPropagation(); setShowConfig(!showConfig); }}
+          onClick={(e) => { e.stopPropagation(); /* Handle config if needed */ }}
           className="absolute top-2 right-2 p-2 bg-white/80 rounded-full hover:bg-white transition-colors"
         >
           <Settings size={16} />
@@ -50,7 +40,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
         <p className="text-sm font-light text-[#881337] mb-3 tracking-wide">{product.category}</p>
         <span className="text-sm font-medium text-[#4C0519] block">R$ {product.price}</span>
       </div>
-      {showConfig && <ImageGenerator onImageGenerated={setImageUrl} />}
     </div>
   );
 };
