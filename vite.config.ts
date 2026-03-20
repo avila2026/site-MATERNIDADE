@@ -12,7 +12,10 @@ export default defineConfig(({ mode }) => {
       plugins: [react()],
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        'process.env.AI_PROVIDER': JSON.stringify(env.AI_PROVIDER || 'gemini'),
+        'process.env.OLLAMA_BASE_URL': JSON.stringify(env.OLLAMA_BASE_URL || 'http://localhost:11434'),
+        'process.env.OLLAMA_MODEL': JSON.stringify(env.OLLAMA_MODEL || 'llama3'),
       },
       resolve: {
         alias: {
