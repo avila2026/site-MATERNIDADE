@@ -19,12 +19,12 @@ View your app in AI Studio: https://ai.studio/apps/e58668c2-bdb8-4dba-8e93-f8d25
 3. Run the app:
    `npm run dev`
 
-## Importar para Hostinger
+## Deploy to Hostinger
 
-1. Gere os arquivos de produção:
+1. Build production files:
    `npm run build`
-2. No painel da Hostinger (Gerenciador de Arquivos), acesse `public_html`.
-3. Envie o conteúdo da pasta `dist/` para `public_html`.
-4. Se for atualizar uma versão existente, substitua os arquivos antigos.
+2. In Hostinger File Manager, open `public_html`.
+3. Upload the contents of `dist/` to `public_html`.
+4. If updating an existing deployment, replace old files.
 
-> A configuração `base: './'` no Vite já está ajustada para funcionar com deploy estático na Hostinger.
+> The Vite setting `base: './'` is already configured to work with static hosting on Hostinger.
