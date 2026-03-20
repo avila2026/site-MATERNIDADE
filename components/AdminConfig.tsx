@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutGrid, List } from 'lucide-react';
+import { LayoutGrid, List, Pencil, Trash2 } from 'lucide-react';
 import ProductCard from './ProductCard';
 import ImageGenerator from './ImageGenerator';
 import { Product } from '../types';
@@ -10,35 +10,58 @@ interface AdminConfigProps {
   onProductClick: (product: Product) => void;
   onAddProduct: (product: Product) => void;
   onUpdateProduct: (product: Product) => void;
+  onDeleteProduct: (productId: string) => void;
 }
 
-const ProductListItem: React.FC<{ product: Product; onClick: (p: Product) => void }> = ({ product, onClick }) => (
+const ProductListItem: React.FC<{
+  product: Product;
+  onClick: (p: Product) => void;
+  onEdit: (p: Product) => void;
+  onDelete: (id: string) => void;
+}> = ({ product, onClick, onEdit, onDelete }) => (
   <div 
-    onClick={() => onClick(product)}
     className="flex items-center gap-6 bg-white p-4 rounded-xl border border-[#FECDD3]/30 hover:border-[#4C0519] transition-all cursor-pointer group"
   >
-    <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-[#FFF1F2]">
-      <img 
-        src={product.imageUrl} 
-        alt={product.name} 
-        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        referrerPolicy="no-referrer"
-      />
-    </div>
-    <div className="flex-grow">
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="font-serif text-[#4C0519] text-lg">{product.name}</h3>
-          <p className="text-xs uppercase tracking-widest text-[#FDA4AF]">{product.category}</p>
-        </div>
-        <p className="font-medium text-[#4C0519]">R$ {product.price.toLocaleString('pt-BR')}</p>
+    <div onClick={() => onClick(product)} className="flex items-center gap-6 flex-grow min-w-0">
+      <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-[#FFF1F2]">
+        <img 
+          src={product.imageUrl} 
+          alt={product.name} 
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          referrerPolicy="no-referrer"
+        />
       </div>
-      <p className="text-sm text-[#881337] line-clamp-1 mt-1">{product.description}</p>
+      <div className="flex-grow min-w-0">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="font-serif text-[#4C0519] text-lg">{product.name}</h3>
+            <p className="text-xs uppercase tracking-widest text-[#FDA4AF]">{product.category}</p>
+          </div>
+          <p className="font-medium text-[#4C0519]">R$ {product.price.toLocaleString('pt-BR')}</p>
+        </div>
+        <p className="text-sm text-[#881337] line-clamp-1 mt-1">{product.description}</p>
+      </div>
+    </div>
+    <div className="flex gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+      <button 
+        onClick={(e) => { e.stopPropagation(); onEdit(product); }}
+        className="bg-white p-2 rounded-full shadow-md hover:bg-[#FFF1F2] transition-colors"
+        title="Editar"
+      >
+        <Pencil size={16} className="text-[#4C0519]" />
+      </button>
+      <button 
+        onClick={(e) => { e.stopPropagation(); onDelete(product.id); }}
+        className="bg-white p-2 rounded-full shadow-md hover:bg-red-50 transition-colors"
+        title="Excluir"
+      >
+        <Trash2 size={16} className="text-red-500" />
+      </button>
     </div>
   </div>
 );
 
-const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductClick, onAddProduct, onUpdateProduct }) => {
+const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductClick, onAddProduct, onUpdateProduct, onDeleteProduct }) => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -46,6 +69,7 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
   const [imageUrl, setImageUrl] = useState('');
   const [category, setCategory] = useState<Product['category']>('Quarto');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [formError, setFormError] = useState('');
 
   const startEdit = (product: Product) => {
     setEditingProduct(product);
@@ -54,22 +78,52 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
     setPrice(product.price.toString());
     setImageUrl(product.imageUrl);
     setCategory(product.category);
+    setFormError('');
+  };
+
+  const resetForm = () => {
+    setEditingProduct(null);
+    setName('');
+    setDescription('');
+    setPrice('');
+    setImageUrl('');
+    setFormError('');
+  };
+
+  const handleDelete = (productId: string) => {
+    if (window.confirm('Tem certeza que deseja excluir este produto?')) {
+      onDeleteProduct(productId);
+      if (editingProduct?.id === productId) {
+        resetForm();
+      }
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !description || !price || !imageUrl) return;
+
+    if (!name || !description || !price || !imageUrl) {
+      setFormError('Preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice) || parsedPrice <= 0) {
+      setFormError('O preço deve ser um valor maior que zero.');
+      return;
+    }
+
+    setFormError('');
 
     if (editingProduct) {
       onUpdateProduct({
         ...editingProduct,
         name,
         description,
-        price: parseFloat(price),
+        price: parsedPrice,
         category,
         imageUrl,
       });
-      setEditingProduct(null);
     } else {
       const newProduct: Product = {
         id: `p${Date.now()}`,
@@ -77,17 +131,14 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
         tagline: 'Novidade',
         description,
         longDescription: description,
-        price: parseFloat(price),
+        price: parsedPrice,
         category,
         imageUrl,
         features: ['Novo Produto']
       };
       onAddProduct(newProduct);
     }
-    setName('');
-    setDescription('');
-    setPrice('');
-    setImageUrl('');
+    resetForm();
   };
 
   return (
@@ -102,6 +153,11 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
           <div className="lg:w-1/3">
             <h2 className="text-3xl font-serif text-[#4C0519] mb-8">{editingProduct ? 'Editar Produto' : 'Adicionar Novo Produto'}</h2>
             <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-2xl shadow-sm border border-[#FECDD3]/30">
+              {formError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                  {formError}
+                </div>
+              )}
               <div>
                 <label className="block text-xs uppercase tracking-widest text-[#881337] mb-2">Nome</label>
                 <input 
@@ -128,6 +184,8 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
                     type="number" 
                     value={price} 
                     onChange={(e) => setPrice(e.target.value)}
+                    min="0.01"
+                    step="0.01"
                     className="w-full bg-[#FFF1F2] border-none rounded-lg p-3 outline-none focus:ring-1 focus:ring-[#4C0519] transition-all"
                     placeholder="0.00"
                   />
@@ -171,13 +229,7 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
               {editingProduct && (
                 <button 
                   type="button"
-                  onClick={() => {
-                    setEditingProduct(null);
-                    setName('');
-                    setDescription('');
-                    setPrice('');
-                    setImageUrl('');
-                  }}
+                  onClick={resetForm}
                   className="w-full bg-[#FDA4AF] text-white py-4 rounded-full text-sm uppercase tracking-widest font-medium hover:bg-[#F4C2C2] transition-colors mt-2"
                 >
                   Cancelar
@@ -189,7 +241,10 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
           {/* List Section */}
           <div className="lg:w-2/3">
             <div className="flex justify-between items-center mb-12">
-              <h1 className="text-4xl font-serif text-[#4C0519]">Produtos Atuais</h1>
+              <div>
+                <h1 className="text-4xl font-serif text-[#4C0519]">Produtos Atuais</h1>
+                <p className="text-sm text-[#881337] mt-2">{products.length} {products.length === 1 ? 'produto' : 'produtos'}</p>
+              </div>
               
               {/* View Toggle */}
               <div className="flex bg-white rounded-full p-1 border border-[#FECDD3]/30">
@@ -215,22 +270,29 @@ const AdminConfig: React.FC<AdminConfigProps> = ({ products, onBack, onProductCl
                 {products.map(product => (
                   <div key={product.id} className="relative group">
                     <ProductCard product={product} onClick={onProductClick} />
-                    <button 
-                      onClick={() => startEdit(product)}
-                      className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
-                      title="Editar"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#4C0519]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                      </svg>
-                    </button>
+                    <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button 
+                        onClick={() => startEdit(product)}
+                        className="bg-white p-2 rounded-full shadow-md hover:bg-[#FFF1F2] transition-colors"
+                        title="Editar"
+                      >
+                        <Pencil size={16} className="text-[#4C0519]" />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(product.id)}
+                        className="bg-white p-2 rounded-full shadow-md hover:bg-red-50 transition-colors"
+                        title="Excluir"
+                      >
+                        <Trash2 size={16} className="text-red-500" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="space-y-4">
                 {products.map(product => (
-                  <ProductListItem key={product.id} product={product} onClick={onProductClick} />
+                  <ProductListItem key={product.id} product={product} onClick={onProductClick} onEdit={startEdit} onDelete={handleDelete} />
                 ))}
               </div>
             )}

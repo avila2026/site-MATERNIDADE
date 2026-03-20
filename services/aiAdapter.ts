@@ -9,13 +9,13 @@ import { PRODUCTS } from '../constants';
 
 export interface AIAdapter {
   sendMessage(history: {role: string, text: string}[], newMessage: string, mode: 'fast' | 'complex'): Promise<string>;
-  generateImage(prompt: string): Promise<string | null>;
+  generateImage(prompt: string, aspectRatio?: string): Promise<string | null>;
 }
 
 // Build the system instruction once and reuse it – the product catalog is static.
 const SYSTEM_INSTRUCTION: string = (() => {
   const productContext = PRODUCTS.map(p =>
-    `- ${p.name} ($${p.price}): ${p.description}. Features: ${p.features.join(', ')}`
+    `- ${p.name} (R$ ${p.price.toLocaleString('pt-BR')}): ${p.description}. Features: ${p.features.join(', ')}`
   ).join('\n');
 
   return `You are the AI Concierge for "Achadinhos Maternidade", a warm, organic lifestyle tech brand. 
@@ -71,8 +71,8 @@ export const GeminiAdapter: AIAdapter = {
     }
   },
 
-  generateImage: async (prompt) => {
-    const cacheKey = `image_${prompt}`;
+  generateImage: async (prompt, aspectRatio = '1:1') => {
+    const cacheKey = `image_${aspectRatio}_${prompt}`;
     const cachedImage = cache.get(cacheKey);
     if (cachedImage) return cachedImage;
 
@@ -81,10 +81,13 @@ export const GeminiAdapter: AIAdapter = {
       const response = await ai.models.generateContent({
         model: 'gemini-3.1-flash-image-preview',
         contents: { parts: [{ text: prompt }] },
-        config: { imageConfig: { aspectRatio: "1:1", imageSize: "1K" } }
+        config: { imageConfig: { aspectRatio, imageSize: "1K" } }
       });
       
-      for (const part of response.candidates[0].content.parts) {
+      const parts = response?.candidates?.[0]?.content?.parts;
+      if (!parts) return null;
+
+      for (const part of parts) {
         if (part.inlineData) {
           const imageUrl = `data:image/png;base64,${part.inlineData.data}`;
           cache.set(cacheKey, imageUrl);
