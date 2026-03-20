@@ -12,8 +12,9 @@ export interface AIAdapter {
   generateImage(prompt: string): Promise<string | null>;
 }
 
-const getSystemInstruction = () => {
-  const productContext = PRODUCTS.map(p => 
+// Build the system instruction once and reuse it – the product catalog is static.
+const SYSTEM_INSTRUCTION: string = (() => {
+  const productContext = PRODUCTS.map(p =>
     `- ${p.name} ($${p.price}): ${p.description}. Features: ${p.features.join(', ')}`
   ).join('\n');
 
@@ -26,11 +27,26 @@ const getSystemInstruction = () => {
   Answer customer questions about specifications, recommendations, and brand philosophy.
   Keep answers concise (under 3 sentences usually) to fit the chat UI. 
   If asked about products not in the list, gently steer them back to Achadinhos Maternidade products.`;
+})();
+
+/**
+ * Compute a lightweight hash string for a chat history + new message so that
+ * we avoid calling JSON.stringify on the entire history array on every request.
+ * Uses a djb2-style algorithm over the serialised text.
+ */
+const hashChatKey = (history: {role: string, text: string}[], newMessage: string): string => {
+  let hash = 5381;
+  const str = history.map(h => `${h.role}:${h.text}`).join('|') + '|' + newMessage;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
+    hash = hash >>> 0; // keep it an unsigned 32-bit integer
+  }
+  return `chat_${history.length}_${hash}`;
 };
 
 export const GeminiAdapter: AIAdapter = {
   sendMessage: async (history, newMessage, mode) => {
-    const cacheKey = `chat_${JSON.stringify(history)}_${newMessage}`;
+    const cacheKey = hashChatKey(history, newMessage);
     const cachedResponse = cache.get(cacheKey);
     if (cachedResponse) return cachedResponse;
 
@@ -40,7 +56,7 @@ export const GeminiAdapter: AIAdapter = {
       
       const chat = ai.chats.create({
         model,
-        config: { systemInstruction: getSystemInstruction() },
+        config: { systemInstruction: SYSTEM_INSTRUCTION },
         history: history.map(h => ({ role: h.role, parts: [{ text: h.text }] }))
       });
 

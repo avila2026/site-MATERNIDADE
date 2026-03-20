@@ -11,6 +11,14 @@ const getApiKey = () => {
     return key;
 };
 
+// Singleton: reuse a single GoogleGenAI instance across all API calls.
+let _instance: GoogleGenAI | null = null;
+
 export const aiFactory = {
-    getInstance: () => new GoogleGenAI({ apiKey: getApiKey() }),
+    getInstance: (): GoogleGenAI => {
+        if (!_instance) {
+            _instance = new GoogleGenAI({ apiKey: getApiKey() });
+        }
+        return _instance;
+    },
 };

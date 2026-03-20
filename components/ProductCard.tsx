@@ -7,7 +7,7 @@ interface ProductCardProps {
   onClick: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
+const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, onClick }) => {
   return (
     <div className="group flex flex-col gap-6 cursor-pointer" onClick={() => onClick(product)}>
       <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#FFE4E6]">
@@ -42,6 +42,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
       </div>
     </div>
   );
-};
+});
+
+ProductCard.displayName = 'ProductCard';
 
 export default ProductCard;

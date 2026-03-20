@@ -4,7 +4,7 @@
 */
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ProductGrid from './components/ProductGrid';
@@ -25,16 +25,26 @@ function App() {
   const [view, setView] = useState<ViewState>({ type: 'home' });
   const [cartItems, setCartItems] = useState<Product[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  // Stores the section id to scroll to after a view change
+  const pendingScrollRef = useRef<string | null>(null);
+
+  // Scroll to the pending section once the home view has mounted
+  useEffect(() => {
+    if (view.type === 'home' && pendingScrollRef.current !== null) {
+      const targetId = pendingScrollRef.current;
+      pendingScrollRef.current = null;
+      scrollToSection(targetId);
+    }
+  }, [view]);
 
   // Handle navigation (clicks on Navbar or Footer links)
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     e.preventDefault();
     
-    // If we are not home, go home first
+    // If we are not home, go home first and defer the scroll to the useEffect above
     if (view.type !== 'home') {
+      pendingScrollRef.current = targetId;
       setView({ type: 'home' });
-      // Allow state update to render Home before scrolling
-      setTimeout(() => scrollToSection(targetId), 0);
     } else {
       scrollToSection(targetId);
     }
@@ -72,9 +82,7 @@ function App() {
   };
 
   const removeFromCart = (index: number) => {
-    const newItems = [...cartItems];
-    newItems.splice(index, 1);
-    setCartItems(newItems);
+    setCartItems(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -109,8 +117,8 @@ function App() {
           <ProductDetail 
             product={view.product} 
             onBack={() => {
+              pendingScrollRef.current = 'products';
               setView({ type: 'home' });
-              setTimeout(() => scrollToSection('products'), 50);
             }}
             onAddToCart={addToCart}
           />
