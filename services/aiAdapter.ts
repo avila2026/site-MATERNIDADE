@@ -6,6 +6,7 @@
 import { aiFactory } from './aiFactory';
 import { cache } from './cache';
 import { PRODUCTS } from '../constants';
+import { OllamaAdapter } from './ollamaAdapter';
 
 export interface AIAdapter {
   sendMessage(history: {role: string, text: string}[], newMessage: string, mode: 'fast' | 'complex'): Promise<string>;
@@ -98,3 +99,13 @@ export const GeminiAdapter: AIAdapter = {
     }
   }
 };
+
+/**
+ * Unified AI service that delegates to the configured provider.
+ * Set the AI_PROVIDER environment variable to "ollama" to use Ollama,
+ * otherwise defaults to Gemini.
+ */
+const getProvider = (): string => process.env.AI_PROVIDER || 'gemini';
+
+export const aiService: AIAdapter =
+  getProvider() === 'ollama' ? OllamaAdapter : GeminiAdapter;

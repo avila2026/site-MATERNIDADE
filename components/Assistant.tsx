@@ -5,7 +5,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../types';
-import { GeminiAdapter } from '../services/aiAdapter';
+import { aiService } from '../services/aiAdapter';
 
 const Assistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,7 +34,7 @@ const Assistant: React.FC = () => {
       // Check if user wants to generate an image
       if (inputValue.toLowerCase().includes('gerar imagem de')) {
           const prompt = inputValue.replace(/gerar imagem de/i, '').trim();
-          const imageUrl = await GeminiAdapter.generateImage(prompt);
+          const imageUrl = await aiService.generateImage(prompt);
           if (imageUrl) {
               const aiMsg: ChatMessage = { role: 'model', text: `Aqui está a imagem de: ${prompt}`, imageUrl, timestamp: Date.now() };
               setMessages(prev => [...prev, aiMsg]);
@@ -45,7 +45,7 @@ const Assistant: React.FC = () => {
       } else {
           const history = messages.map(m => ({ role: m.role, text: m.text }));
           // Use fast mode for chat
-          const responseText = await GeminiAdapter.sendMessage(history, userMsg.text, 'fast');
+          const responseText = await aiService.sendMessage(history, userMsg.text, 'fast');
           
           const aiMsg: ChatMessage = { role: 'model', text: responseText, timestamp: Date.now() };
           setMessages(prev => [...prev, aiMsg]);

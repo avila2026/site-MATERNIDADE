@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GeminiAdapter } from '../services/aiAdapter';
+import { aiService } from '../services/aiAdapter';
 
 interface ImageGeneratorProps {
   onImageGenerated: (imageUrl: string) => void;
@@ -13,7 +13,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
   const generateImage = async () => {
     setLoading(true);
     try {
-      const imageUrl = await GeminiAdapter.generateImage(prompt);
+      const imageUrl = await aiService.generateImage(prompt);
       if (imageUrl) {
         onImageGenerated(imageUrl);
       }
