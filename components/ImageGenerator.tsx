@@ -13,7 +13,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
   const generateImage = async () => {
     setLoading(true);
     try {
-      const imageUrl = await GeminiAdapter.generateImage(prompt);
+      const imageUrl = await GeminiAdapter.generateImage(prompt, aspectRatio);
       if (imageUrl) {
         onImageGenerated(imageUrl);
       }

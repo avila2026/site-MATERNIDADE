@@ -92,6 +92,10 @@ function App() {
             onNavClick={handleNavClick} 
             cartCount={cartItems.length}
             onOpenCart={() => setIsCartOpen(true)}
+            onAdminClick={() => {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              setView({ type: 'admin' });
+            }}
         />
       )}
       
@@ -145,6 +149,7 @@ function App() {
             onProductClick={(p) => setView({ type: 'product', product: p })}
             onAddProduct={(newProduct) => setProducts([...products, newProduct])}
             onUpdateProduct={(updatedProduct) => setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p))}
+            onDeleteProduct={(productId) => setProducts(products.filter(p => p.id !== productId))}
           />
         )}
       </main>
