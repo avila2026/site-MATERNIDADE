@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GoogleGenAI } from "@google/genai";
+import { GeminiAdapter } from '../services/aiAdapter';
 
 interface ImageGeneratorProps {
   onImageGenerated: (imageUrl: string) => void;
@@ -13,27 +13,9 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
   const generateImage = async () => {
     setLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.1-flash-image-preview',
-        contents: {
-          parts: [{ text: prompt }],
-        },
-        config: {
-          imageConfig: {
-            aspectRatio: aspectRatio,
-            imageSize: "1K"
-          },
-        },
-      });
-
-      for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          const base64EncodeString = part.inlineData.data;
-          const imageUrl = `data:image/png;base64,${base64EncodeString}`;
-          onImageGenerated(imageUrl);
-          break;
-        }
+      const imageUrl = await GeminiAdapter.generateImage(prompt);
+      if (imageUrl) {
+        onImageGenerated(imageUrl);
       }
     } catch (error) {
       console.error('Error generating image:', error);
