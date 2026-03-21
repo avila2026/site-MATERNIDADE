@@ -18,3 +18,13 @@ View your app in AI Studio: https://ai.studio/apps/e58668c2-bdb8-4dba-8e93-f8d25
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Acesso por link no GitHub Codespaces
+
+Ao abrir este repositório em um Codespace:
+
+1. Execute `npm run dev`
+2. O Codespaces irá encaminhar automaticamente a porta `3000`
+3. Abra a aba **Ports**, localize a porta `3000` e clique em **Open in Browser**
+
+Esse será o link público/compartilhável de acesso ao app rodando no Codespace.
