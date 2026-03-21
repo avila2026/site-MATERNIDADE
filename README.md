@@ -18,3 +18,11 @@ View your app in AI Studio: https://ai.studio/apps/e58668c2-bdb8-4dba-8e93-f8d25
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Run in GitHub Codespaces
+
+1. Open this repository in a new Codespace.
+2. Wait for the container setup to finish (`npm install` runs automatically).
+3. Start the app:
+   `npm run dev`
+4. Open the forwarded port `5173` preview.
