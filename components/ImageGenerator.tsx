@@ -46,6 +46,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
       <button
         onClick={generateImage}
         disabled={loading || !prompt.trim()}
+        aria-label={loading ? 'Gerando imagem...' : !prompt.trim() ? 'Digite uma descrição para gerar a imagem' : 'Gerar imagem'}
         className="w-full bg-[#2C2A26] text-white p-2 rounded disabled:opacity-50"
       >
         {loading ? 'Gerando...' : 'Gerar Imagem'}
