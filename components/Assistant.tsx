@@ -51,7 +51,8 @@ const Assistant: React.FC = () => {
           setMessages(prev => [...prev, aiMsg]);
       }
     } catch (error) {
-        // Error handled in service
+        const aiMsg: ChatMessage = { role: 'model', text: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.', timestamp: Date.now() };
+        setMessages(prev => [...prev, aiMsg]);
     } finally {
       setIsThinking(false);
     }
@@ -102,8 +103,8 @@ const Assistant: React.FC = () => {
                <div className="flex justify-start">
                  <div className="bg-white border border-[#FFE4E6] p-5 flex gap-1 items-center shadow-sm">
                    <div className="w-1.5 h-1.5 bg-[#FDA4AF] rounded-full animate-bounce"></div>
-                   <div className="w-1.5 h-1.5 bg-[#FDA4AF] rounded-full animate-bounce delay-75"></div>
-                   <div className="w-1.5 h-1.5 bg-[#FDA4AF] rounded-full animate-bounce delay-150"></div>
+                   <div className="w-1.5 h-1.5 bg-[#FDA4AF] rounded-full animate-bounce" style={{ animationDelay: '75ms' }}></div>
+                   <div className="w-1.5 h-1.5 bg-[#FDA4AF] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
                  </div>
                </div>
             )}
