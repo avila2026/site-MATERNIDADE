@@ -52,7 +52,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onBack, onAddToC
           <div className="flex flex-col justify-center max-w-xl">
              <span className="text-sm font-medium text-[#FDA4AF] uppercase tracking-widest mb-2">{product.category}</span>
              <h1 className="text-4xl md:text-5xl font-serif text-[#4C0519] mb-4">{product.name}</h1>
-             <span className="text-2xl font-light text-[#4C0519] mb-8">R$ {product.price}</span>
+             <span className="text-2xl font-light text-[#4C0519] mb-8">R$ {product.price.toLocaleString('pt-BR')}</span>
              
              <p className="text-[#881337] leading-relaxed font-light text-lg mb-8 border-b border-[#FECDD3] pb-8">
                {product.longDescription || product.description}
@@ -84,7 +84,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onBack, onAddToC
                  onClick={() => onAddToCart(product)}
                  className="w-full py-5 bg-[#4C0519] text-[#FFF1F2] uppercase tracking-widest text-sm font-medium hover:bg-[#881337] transition-colors"
                >
-                 Adicionar ao Carrinho — R$ {product.price}
+                 Adicionar ao Carrinho — R$ {product.price.toLocaleString('pt-BR')}
                </button>
                <ul className="mt-8 space-y-2 text-sm text-[#881337]">
                  {product.features.map((feature, idx) => (

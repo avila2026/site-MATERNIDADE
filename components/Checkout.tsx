@@ -86,7 +86,7 @@ const Checkout: React.FC<CheckoutProps> = ({ items, onBack }) => {
                     disabled
                     className="w-full py-5 bg-[#FDA4AF] text-[#FFF1F2] uppercase tracking-widest text-sm font-medium cursor-not-allowed opacity-80"
                 >
-                    Pagar Agora — R$ {total}
+                    Pagar Agora — R$ {total.toLocaleString('pt-BR')}
                 </button>
               </div>
             </div>
@@ -107,7 +107,7 @@ const Checkout: React.FC<CheckoutProps> = ({ items, onBack }) => {
                        <h3 className="font-serif text-[#4C0519] text-base">{item.name}</h3>
                        <p className="text-xs text-[#FDA4AF]">{item.category}</p>
                     </div>
-                    <span className="text-sm text-[#881337]">R$ {item.price}</span>
+                    <span className="text-sm text-[#881337]">R$ {item.price.toLocaleString('pt-BR')}</span>
                  </div>
                ))}
             </div>
@@ -115,10 +115,10 @@ const Checkout: React.FC<CheckoutProps> = ({ items, onBack }) => {
             <div className="border-t border-[#FECDD3] pt-6 space-y-2">
               <div className="flex justify-between text-sm text-[#881337]">
                  <span>Subtotal</span>
-                 <span>R$ {subtotal}</span>
+                 <span>R$ {subtotal.toLocaleString('pt-BR')}</span>
               </div>
               <div className="flex justify-between text-sm text-[#881337]">
-                 <span>Shipping</span>
+                 <span>Frete</span>
                  <span>Grátis</span>
               </div>
             </div>
@@ -128,7 +128,7 @@ const Checkout: React.FC<CheckoutProps> = ({ items, onBack }) => {
                  <span className="font-serif text-xl text-[#4C0519]">Total</span>
                  <div className="flex items-end gap-2">
                    <span className="text-xs text-[#FDA4AF] mb-1">BRL</span>
-                   <span className="font-serif text-2xl text-[#4C0519]">R$ {total}</span>
+                   <span className="font-serif text-2xl text-[#4C0519]">R$ {total.toLocaleString('pt-BR')}</span>
                  </div>
                </div>
             </div>

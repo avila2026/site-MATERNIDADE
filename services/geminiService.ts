@@ -4,7 +4,7 @@
 */
 
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { PRODUCTS } from '../constants';
 
 const getSystemInstruction = () => {
@@ -69,7 +69,7 @@ export const generateImage = async (prompt: string): Promise<string | null> => {
             }
         });
         
-        for (const part of response.candidates[0].content.parts) {
+        for (const part of response.candidates?.[0]?.content?.parts ?? []) {
             if (part.inlineData) {
                 return `data:image/png;base64,${part.inlineData.data}`;
             }
