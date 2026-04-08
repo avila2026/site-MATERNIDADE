@@ -18,3 +18,13 @@ View your app in AI Studio: https://ai.studio/apps/e58668c2-bdb8-4dba-8e93-f8d25
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Deploy to Hostinger
+
+1. Build production files:
+   `npm run build`
+2. In Hostinger File Manager, open `public_html`.
+3. Upload the contents of `dist/` to `public_html`.
+4. If updating an existing deployment, replace old files.
+
+> The Vite setting `base: './'` is already configured to work with static hosting on Hostinger.
