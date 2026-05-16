@@ -1,0 +1,63 @@
+name: 🚀 Build & Deploy — Achadinhos Maternidade
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build & Type Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 TypeScript check
+        run: npm run lint
+
+      - name: 🏗️ Build production
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          VITE_DEFAULT_AI_PROVIDER: ${{ secrets.VITE_DEFAULT_AI_PROVIDER || 'gemini' }}
+        run: npm run build
+
+      - name: 📤 Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  # Descomente e configure o deploy para Hostinger via FTP quando pronto:
+  # deploy:
+  #   name: Deploy to Hostinger
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/main'
+  #   steps:
+  #     - name: 📥 Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: dist
+  #         path: dist/
+  #     - name: 🚀 FTP Deploy
+  #       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+  #       with:
+  #         server: ${{ secrets.FTP_HOST }}
+  #         username: ${{ secrets.FTP_USER }}
+  #         password: ${{ secrets.FTP_PASSWORD }}
+  #         local-dir: dist/
+  #         server-dir: public_html/
