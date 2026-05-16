@@ -12,8 +12,14 @@ export default defineConfig(({ mode }) => {
       },
       plugins: [react()],
       define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+        // Gemini API Key
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        // Anthropic API Key (Claude)
+        'process.env.ANTHROPIC_API_KEY': JSON.stringify(env.ANTHROPIC_API_KEY),
+        // Default AI provider: "gemini" | "anthropic"
+        'process.env.VITE_DEFAULT_AI_PROVIDER': JSON.stringify(
+          env.VITE_DEFAULT_AI_PROVIDER || 'gemini'
+        ),
       },
       resolve: {
         alias: {
