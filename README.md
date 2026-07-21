@@ -43,6 +43,17 @@ npm run dev
 # → http://localhost:3000
 ```
 
+## Acesso por link no GitHub Codespaces
+
+Ao abrir este repositório em um Codespace:
+
+1. Execute `npm run dev`
+2. O Codespaces irá encaminhar automaticamente a porta `3000`
+3. Abra a aba **Ports**, localize a porta `3000` e clique em **Open in Browser**
+
+Esse link funciona imediatamente para você dentro do Codespaces.  
+Se quiser compartilhar com outras pessoas sem autenticação, altere a visibilidade da porta para **Public** na aba **Ports**.
+
 ## Configuração das APIs
 
 Edite `.env.local`:
