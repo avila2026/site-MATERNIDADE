@@ -1,5 +1,4 @@
 import React from 'react';
-import { Settings } from 'lucide-react';
 import { Product } from '../types';
 
 interface ProductCardProps {
@@ -26,19 +25,12 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, onClick }
                 </span>
             </div>
         </div>
-
-        <button
-          onClick={(e) => { e.stopPropagation(); /* Handle config if needed */ }}
-          className="absolute top-2 right-2 p-2 bg-white/80 rounded-full hover:bg-white transition-colors"
-        >
-          <Settings size={16} />
-        </button>
       </div>
       
       <div className="text-center">
         <h3 className="text-2xl font-serif font-medium text-[#4C0519] mb-1 group-hover:opacity-70 transition-opacity">{product.name}</h3>
         <p className="text-sm font-light text-[#881337] mb-3 tracking-wide">{product.category}</p>
-        <span className="text-sm font-medium text-[#4C0519] block">R$ {product.price}</span>
+        <span className="text-sm font-medium text-[#4C0519] block">R$ {product.price.toLocaleString('pt-BR')}</span>
       </div>
     </div>
   );

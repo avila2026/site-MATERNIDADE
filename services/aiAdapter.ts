@@ -1,78 +1,95 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
-*/
+ *
+ * Ponto de entrada unificado para os adaptadores de IA.
+ *
+ * Uso:
+ *   import { GeminiAdapter }    from './aiAdapter';  // Gemini direto
+ *   import { AnthropicAdapter } from './aiAdapter';  // Claude direto
+ *   import { getAdapter }       from './aiAdapter';  // Seleção dinâmica
+ */
 
+import { AIAdapter, AIProvider } from '../types';
 import { aiFactory } from './aiFactory';
+import { anthropicFactory } from './anthropicFactory';
 import { cache } from './cache';
 import { PRODUCTS } from '../constants';
 
-export interface AIAdapter {
-  sendMessage(history: {role: string, text: string}[], newMessage: string, mode: 'fast' | 'complex'): Promise<string>;
-  generateImage(prompt: string): Promise<string | null>;
-}
-
-// Build the system instruction once and reuse it – the product catalog is static.
+// ─────────────────────────────────────────────────────────────
+// System instruction compartilhada (mantida em um único lugar)
+// ─────────────────────────────────────────────────────────────
 const SYSTEM_INSTRUCTION: string = (() => {
   const productContext = PRODUCTS.map(p =>
-    `- ${p.name} ($${p.price}): ${p.description}. Features: ${p.features.join(', ')}`
+    `- ${p.name} (R$${p.price}): ${p.description}. Características: ${p.features.join(', ')}`
   ).join('\n');
 
-  return `You are the AI Concierge for "Achadinhos Maternidade", a warm, organic lifestyle tech brand. 
-  Your tone is calm, inviting, grounded, and sophisticated. Avoid overly "techy" jargon; prefer words like "natural", "seamless", "warm", and "texture".
-  
-  Here is our current product catalog:
-  ${productContext}
-  
-  Answer customer questions about specifications, recommendations, and brand philosophy.
-  Keep answers concise (under 3 sentences usually) to fit the chat UI. 
-  If asked about products not in the list, gently steer them back to Achadinhos Maternidade products.`;
+  return `Você é o Concierge IA da "Achadinhos Maternidade", uma marca de lifestyle orgânico e acolhedor.
+Seu tom é calmo, convidativo, gentil e sofisticado. Prefira palavras como "natural", "aconchegante", "suave" e "cuidado".
+
+Catálogo de produtos atual:
+${productContext}
+
+Responda perguntas sobre especificações, recomendações e filosofia da marca.
+Mantenha as respostas concisas (normalmente menos de 3 frases) para caber na UI do chat.
+Se perguntado sobre produtos fora do catálogo, redirecione gentilmente para os produtos da Achadinhos Maternidade.`;
 })();
 
-/**
- * Compute a lightweight hash string for a chat history + new message so that
- * we avoid calling JSON.stringify on the entire history array on every request.
- * Uses a djb2-style algorithm over the serialised text.
- */
-const hashChatKey = (history: {role: string, text: string}[], newMessage: string): string => {
+// ─────────────────────────────────────────────────────────────
+// Utilitário de hash de cache (djb2 sobre o texto do histórico)
+// ─────────────────────────────────────────────────────────────
+const hashChatKey = (
+  history: { role: string; text: string }[],
+  newMessage: string,
+  prefix: string
+): string => {
   let hash = 5381;
-  const str = history.map(h => `${h.role}:${h.text}`).join('|') + '|' + newMessage;
+  const str =
+    history.map(h => `${h.role}:${h.text}`).join('|') + '|' + newMessage;
   for (let i = 0; i < str.length; i++) {
     hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
-    hash = hash >>> 0; // keep it an unsigned 32-bit integer
+    hash = hash >>> 0;
   }
-  return `chat_${history.length}_${hash}`;
+  return `${prefix}_${history.length}_${hash}`;
 };
 
+// ─────────────────────────────────────────────────────────────
+// GeminiAdapter
+// ─────────────────────────────────────────────────────────────
 export const GeminiAdapter: AIAdapter = {
+  provider: 'gemini' as AIProvider,
+
   sendMessage: async (history, newMessage, mode) => {
-    const cacheKey = hashChatKey(history, newMessage);
+    const cacheKey = hashChatKey(history, newMessage, 'gemini_chat');
     const cachedResponse = cache.get(cacheKey);
     if (cachedResponse) return cachedResponse;
 
     try {
       const ai = aiFactory.getInstance();
-      const model = mode === 'fast' ? 'gemini-3.1-flash-lite-preview' : 'gemini-3.1-pro-preview';
-      
+      const model =
+        mode === 'fast'
+          ? 'gemini-3.1-flash-lite-preview'
+          : 'gemini-3.1-pro-preview';
+
       const chat = ai.chats.create({
         model,
         config: { systemInstruction: SYSTEM_INSTRUCTION },
-        history: history.map(h => ({ role: h.role, parts: [{ text: h.text }] }))
+        history: history.map(h => ({ role: h.role, parts: [{ text: h.text }] })),
       });
 
       const result = await chat.sendMessage({ message: newMessage });
-      const responseText = result.text || "";
-      
+      const responseText = result.text || '';
+
       cache.set(cacheKey, responseText);
       return responseText;
     } catch (error) {
-      console.error("Gemini API Error:", error);
-      return "I apologize, but I seem to be having trouble reaching our archives at the moment.";
+      console.error('Gemini API Error:', error);
+      return 'Desculpe, estou com dificuldades para processar sua solicitação no momento.';
     }
   },
 
-  generateImage: async (prompt) => {
-    const cacheKey = `image_${prompt}`;
+  generateImage: async (prompt, aspectRatio = '1:1') => {
+    const cacheKey = `gemini_image_${prompt}`;
     const cachedImage = cache.get(cacheKey);
     if (cachedImage) return cachedImage;
 
@@ -81,10 +98,10 @@ export const GeminiAdapter: AIAdapter = {
       const response = await ai.models.generateContent({
         model: 'gemini-3.1-flash-image-preview',
         contents: { parts: [{ text: prompt }] },
-        config: { imageConfig: { aspectRatio: "1:1", imageSize: "1K" } }
+        config: { imageConfig: { aspectRatio, imageSize: '1K' } },
       });
-      
-      for (const part of response.candidates[0].content.parts) {
+
+      for (const part of response.candidates?.[0]?.content?.parts ?? []) {
         if (part.inlineData) {
           const imageUrl = `data:image/png;base64,${part.inlineData.data}`;
           cache.set(cacheKey, imageUrl);
@@ -93,8 +110,47 @@ export const GeminiAdapter: AIAdapter = {
       }
       return null;
     } catch (error) {
-      console.error("Image Generation Error:", error);
+      console.error('Gemini Image Generation Error:', error);
       return null;
     }
+  },
+};
+
+// ─────────────────────────────────────────────────────────────
+// AnthropicAdapter (re-exportado do módulo dedicado)
+// ─────────────────────────────────────────────────────────────
+export { AnthropicAdapter } from './anthropicAdapter';
+
+// ─────────────────────────────────────────────────────────────
+// getAdapter — seleção dinâmica de provedor
+// ─────────────────────────────────────────────────────────────
+/**
+ * Retorna o adaptador correto para o provedor informado.
+ * Fallback: GeminiAdapter se o provedor não for reconhecido.
+ *
+ * @example
+ *   const adapter = getAdapter('anthropic');
+ *   const reply = await adapter.sendMessage(history, msg, 'fast');
+ */
+export const getAdapter = (provider: AIProvider): AIAdapter => {
+  switch (provider) {
+    case 'anthropic': {
+      // Importação lazy para evitar instanciar o cliente quando não necessário
+      const { AnthropicAdapter } = require('./anthropicAdapter');
+      return AnthropicAdapter;
+    }
+    case 'gemini':
+    default:
+      return GeminiAdapter;
   }
+};
+
+/**
+ * Retorna o provedor configurado via variável de ambiente.
+ * Padrão: 'gemini'
+ */
+export const getDefaultProvider = (): AIProvider => {
+  const env = process.env.VITE_DEFAULT_AI_PROVIDER;
+  if (env === 'anthropic' || env === 'gemini') return env;
+  return 'gemini';
 };

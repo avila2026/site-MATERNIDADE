@@ -9,16 +9,21 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
   const [prompt, setPrompt] = useState('');
   const [aspectRatio, setAspectRatio] = useState('1:1');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const generateImage = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const imageUrl = await GeminiAdapter.generateImage(prompt);
+      const imageUrl = await GeminiAdapter.generateImage(prompt, aspectRatio);
       if (imageUrl) {
         onImageGenerated(imageUrl);
+      } else {
+        setError('Não foi possível gerar a imagem. Tente novamente.');
       }
-    } catch (error) {
-      console.error('Error generating image:', error);
+    } catch (err) {
+      console.error('Error generating image:', err);
+      setError('Erro ao gerar imagem. Verifique sua conexão e tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -40,11 +45,13 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
       </select>
       <button
         onClick={generateImage}
-        disabled={loading}
-        className="w-full bg-[#2C2A26] text-white p-2 rounded"
+        disabled={loading || !prompt.trim()}
+        aria-label={loading ? 'Gerando imagem...' : !prompt.trim() ? 'Digite uma descrição para gerar a imagem' : 'Gerar imagem'}
+        className="w-full bg-[#2C2A26] text-white p-2 rounded disabled:opacity-50"
       >
         {loading ? 'Gerando...' : 'Gerar Imagem'}
       </button>
+      {error && <p className="text-red-600 text-sm">{error}</p>}
     </div>
   );
 };
