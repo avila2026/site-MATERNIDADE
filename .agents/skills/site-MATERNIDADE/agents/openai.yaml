@@ -1,0 +1,6 @@
+interface:
+  display_name: "Site MATERNIDADE"
+  short_description: "Repo-specific patterns and workflows for site-MATERNIDADE"
+  default_prompt: "Use the site-MATERNIDADE repo skill to follow existing architecture, testing, and workflow conventions."
+policy:
+  allow_implicit_invocation: true
