@@ -21,7 +21,7 @@ import { PRODUCTS } from '../constants';
 // ─────────────────────────────────────────────────────────────
 const SYSTEM_INSTRUCTION: string = (() => {
   const productContext = PRODUCTS.map(p =>
-    `- ${p.name} (R$${p.price}): ${p.description}. Características: ${p.features.join(', ')}`
+    `- ${p.name} (R$ ${p.price.toLocaleString('pt-BR')}): ${p.description}. Características: ${p.features.join(', ')}`
   ).join('\n');
 
   return `Você é o Concierge IA da "Achadinhos Maternidade", uma marca de lifestyle orgânico e acolhedor.
@@ -89,7 +89,7 @@ export const GeminiAdapter: AIAdapter = {
   },
 
   generateImage: async (prompt, aspectRatio = '1:1') => {
-    const cacheKey = `gemini_image_${prompt}`;
+    const cacheKey = `gemini_image_${aspectRatio}_${prompt}`;
     const cachedImage = cache.get(cacheKey);
     if (cachedImage) return cachedImage;
 
@@ -101,7 +101,10 @@ export const GeminiAdapter: AIAdapter = {
         config: { imageConfig: { aspectRatio, imageSize: '1K' } },
       });
 
-      for (const part of response.candidates?.[0]?.content?.parts ?? []) {
+      const parts = response?.candidates?.[0]?.content?.parts;
+      if (!parts) return null;
+
+      for (const part of parts) {
         if (part.inlineData) {
           const imageUrl = `data:image/png;base64,${part.inlineData.data}`;
           cache.set(cacheKey, imageUrl);
