@@ -1,14 +1,14 @@
 {
-  "name": "site-maternidade",
+  "name": "site-MATERNIDADE",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
   "postCreateCommand": "npm install",
   "forwardPorts": [
-    5173
+    3000
   ],
   "portsAttributes": {
-    "5173": {
-      "label": "Vite App",
-      "onAutoForward": "openPreview"
+    "3000": {
+      "label": "Vite dev server",
+      "onAutoForward": "notify"
     }
   },
   "customizations": {

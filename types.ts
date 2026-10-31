@@ -1,7 +1,7 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
-*/
+ */
 
 import React from 'react';
 
@@ -24,7 +24,7 @@ export interface JournalArticle {
   date: string;
   excerpt: string;
   image: string;
-  content: React.ReactNode; // Allowing JSX for rich formatting/poems
+  content: React.ReactNode;
 }
 
 export interface ChatMessage {
@@ -41,9 +41,32 @@ export enum LoadingState {
   SUCCESS = 'SUCCESS'
 }
 
-export type ViewState = 
+export type ViewState =
   | { type: 'home' }
   | { type: 'product', product: Product }
   | { type: 'journal', article: JournalArticle }
   | { type: 'checkout' }
   | { type: 'admin' };
+
+/**
+ * AI Provider identifier.
+ * - "gemini"    → Google Gemini (requer GEMINI_API_KEY)
+ * - "anthropic" → Anthropic Claude (requer ANTHROPIC_API_KEY)
+ */
+export type AIProvider = 'gemini' | 'anthropic';
+
+/**
+ * Unified interface implemented by every AI adapter.
+ * New providers must implement this contract.
+ */
+export interface AIAdapter {
+  provider: AIProvider;
+  /** Send a chat message and receive a text reply. */
+  sendMessage(
+    history: { role: string; text: string }[],
+    newMessage: string,
+    mode: 'fast' | 'complex'
+  ): Promise<string>;
+  /** Generate an image from a text prompt. Returns null if unsupported. */
+  generateImage(prompt: string, aspectRatio?: string): Promise<string | null>;
+}
