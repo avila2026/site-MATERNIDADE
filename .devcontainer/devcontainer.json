@@ -10,5 +10,12 @@
       "label": "Vite dev server",
       "onAutoForward": "notify"
     }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint"
+      ]
+    }
   }
 }
